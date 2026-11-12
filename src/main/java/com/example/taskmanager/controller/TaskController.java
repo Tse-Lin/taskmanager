@@ -1,0 +1,58 @@
+
+package com.example.taskmanager.controller;
+
+import com.example.taskmanager.dto.TaskRequest;
+import com.example.taskmanager.entity.Task;
+import com.example.taskmanager.service.TaskService;
+
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/tasks")
+public class TaskController {
+
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    @GetMapping
+    public List<Task> getAllTasks() {
+        return taskService.getAllTasks();
+    }
+
+    @GetMapping("/{id}")
+    public Task getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Task addTask(@Valid @RequestBody TaskRequest request) {
+        return taskService.addTask(request.getTitle());
+    }
+
+    @PutMapping("/{id}")
+    public Task updateTask(
+            @PathVariable Long id,
+            @Valid @RequestBody TaskRequest request) {
+
+        return taskService.updateTask(
+                id,
+                request.getTitle(),
+                request.isCompleted()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+    }
+}
