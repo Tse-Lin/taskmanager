@@ -131,4 +131,12 @@ class TaskControllerTest {
                                 .andExpect(jsonPath("$.error")
                                                 .value("Task not found"));
         }
+
+        @Test
+        void testPageSizeTooLarge() throws Exception {
+                mockMvc.perform(get("/tasks")
+                                .param("size", "101"))
+                                .andExpect(status().isBadRequest());
+        }
+
 }

@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @RestController
@@ -35,6 +38,15 @@ public class TaskController {
             @RequestParam(required = false) Boolean completed,
             @RequestParam(required = false) String keyword,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        if (pageable.getPageNumber() < 0 ||
+                pageable.getPageSize() < 1 ||
+                pageable.getPageSize() > 100) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid pagination parameters");
+        }
 
         return taskService.getTasks(
                 completed, keyword, pageable);
