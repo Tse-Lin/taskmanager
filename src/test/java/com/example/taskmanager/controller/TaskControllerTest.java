@@ -167,4 +167,26 @@ class TaskControllerTest {
                                 .andExpect(status().isBadRequest());
         }
 
+        @Test
+        void testInvalidPaginationErrorResponse() throws Exception {
+                mockMvc.perform(get("/tasks")
+                                .param("page", "-1"))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.error")
+                                                .value("Invalid pagination parameters"));
+        }
+
+        @Test
+        void testTaskNotFoundErrorResponse() throws Exception {
+                when(taskService.getTaskById(999L))
+                                .thenThrow(new ResponseStatusException(
+                                                HttpStatus.NOT_FOUND,
+                                                "Task not found"));
+
+                mockMvc.perform(get("/tasks/999"))
+                                .andExpect(status().isNotFound())
+                                .andExpect(jsonPath("$.error")
+                                                .value("Task not found"));
+        }
+
 }
