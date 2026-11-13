@@ -10,10 +10,8 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 
 @Service
 public class TaskService {
@@ -54,9 +52,17 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    public Page<Task> getTasks(
+            Boolean completed,
+            String keyword,
+            Pageable pageable) {
 
-    public Page<Task> getTasks(Pageable pageable) {
-        return taskRepository.findAll(pageable);
+        if (keyword != null && keyword.isBlank()) {
+            keyword = null;
+        }
+
+        return taskRepository.searchTasks(
+                completed, keyword, pageable);
     }
 
 }

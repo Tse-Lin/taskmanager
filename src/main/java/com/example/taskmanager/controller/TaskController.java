@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
 
-
 import java.util.List;
 
 @RestController
@@ -26,20 +25,19 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping
-    public Page<Task> getAllTasks(
-            @PageableDefault(
-                size = 10,
-                sort = "id",
-                direction = Sort.Direction.ASC
-            ) Pageable pageable) {
-
-        return taskService.getTasks(pageable);
-    }
-
     @GetMapping("/{id}")
     public Task getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
+    }
+
+    @GetMapping
+    public Page<Task> getAllTasks(
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) String keyword,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+
+        return taskService.getTasks(
+                completed, keyword, pageable);
     }
 
     @PostMapping
@@ -56,8 +54,7 @@ public class TaskController {
         return taskService.updateTask(
                 id,
                 request.getTitle(),
-                request.isCompleted()
-        );
+                request.isCompleted());
     }
 
     @DeleteMapping("/{id}")

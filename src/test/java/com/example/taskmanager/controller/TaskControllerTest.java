@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,8 +35,24 @@ class TaskControllerTest {
         private TaskService taskService;
 
         @Test
+        void testSearchTasks() throws Exception {
+                when(taskService.getTasks(
+                                eq(false), eq("Java"), any(Pageable.class)))
+                                .thenReturn(new PageImpl<>(
+                                                List.of(new Task(1L, "Learn Java", false))));
+
+                mockMvc.perform(get("/tasks")
+                                .param("completed", "false")
+                                .param("keyword", "Java"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content[0].title")
+                                                .value("Learn Java"));
+        }
+
+        @Test
         void testGetAllTasks() throws Exception {
-                when(taskService.getTasks(any(Pageable.class)))
+                when(taskService.getTasks(
+                                isNull(), isNull(), any(Pageable.class)))
                                 .thenReturn(new PageImpl<>(
                                                 List.of(new Task(1L, "Learn Java", false))));
 
