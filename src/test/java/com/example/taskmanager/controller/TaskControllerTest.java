@@ -139,4 +139,32 @@ class TaskControllerTest {
                                 .andExpect(status().isBadRequest());
         }
 
+        @Test
+        void testNegativePage() throws Exception {
+                mockMvc.perform(get("/tasks")
+                                .param("page", "-1"))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void testZeroPageSize() throws Exception {
+                mockMvc.perform(get("/tasks")
+                                .param("size", "0"))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void testInvalidPageFormat() throws Exception {
+                mockMvc.perform(get("/tasks")
+                                .param("page", "abc"))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void testInvalidSizeFormat() throws Exception {
+                mockMvc.perform(get("/tasks")
+                                .param("size", "abc"))
+                                .andExpect(status().isBadRequest());
+        }
+
 }

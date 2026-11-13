@@ -37,19 +37,35 @@ public class TaskController {
     public Page<Task> getAllTasks(
             @RequestParam(required = false) Boolean completed,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String page,
+            @RequestParam(required = false) String size,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        if (pageable.getPageNumber() < 0 ||
-                pageable.getPageSize() < 1 ||
-                pageable.getPageSize() > 100) {
+        validatePagination(page, size);
 
+        return taskService.getTasks(
+                completed, keyword, pageable);
+    }
+
+    private void validatePagination(String page, String size) {
+        try {
+            if (page != null && Integer.parseInt(page) < 0) {
+                throw new IllegalArgumentException();
+            }
+
+            if (size != null) {
+                int pageSize = Integer.parseInt(size);
+
+                if (pageSize < 1 || pageSize > 100) {
+                    throw new IllegalArgumentException();
+                }
+            }
+
+        } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Invalid pagination parameters");
         }
-
-        return taskService.getTasks(
-                completed, keyword, pageable);
     }
 
     @PostMapping
