@@ -10,6 +10,11 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+
 @Service
 public class TaskService {
 
@@ -48,4 +53,10 @@ public class TaskService {
         Task task = getTaskById(id);
         taskRepository.delete(task);
     }
+
+
+    public Page<Task> getTasks(Pageable pageable) {
+        return taskRepository.findAll(pageable);
+    }
+
 }

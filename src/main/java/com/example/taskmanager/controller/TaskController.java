@@ -8,7 +8,11 @@ import com.example.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
+
 
 import java.util.List;
 
@@ -23,8 +27,14 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public Page<Task> getAllTasks(
+            @PageableDefault(
+                size = 10,
+                sort = "id",
+                direction = Sort.Direction.ASC
+            ) Pageable pageable) {
+
+        return taskService.getTasks(pageable);
     }
 
     @GetMapping("/{id}")

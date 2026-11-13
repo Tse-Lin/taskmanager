@@ -32,6 +32,7 @@ jobs:
           cache: maven
 
       - name: Build JAR
+        shell: bash
         run: bash ./mvnw -B -DskipTests package
 
       - name: Set up Docker Buildx
