@@ -8,7 +8,7 @@ A Java-based task management REST API built with Spring Boot, MySQL, and Spring 
 - **Framework:** Spring Boot 4.1.2
 - **Database:** MySQL 8.4
 - **Persistence:** Spring Data JPA / Hibernate
-- **Testing:** JUnit 5, Mockito, MockMvc
+- **Testing:** JUnit 5, Mockito, MockMvc, Testcontainers
 - **API Documentation:** OpenAPI / Swagger UI
 - **Build Tool:** Maven
 - **Containerization:** Docker / Docker Compose
@@ -37,26 +37,49 @@ Client / Swagger UI
 - **DTO:** Validates incoming API requests.
 - **Exception Handler:** Provides consistent error responses.
 
+
 ## Features
 
 - Create, retrieve, update, and delete tasks
-- Persist task data in MySQL
-- Validate task titles
+- Persist task data in MySQL using Spring Data JPA
+- Filter tasks by completion status
+- Search task titles with case-insensitive keywords
+- Support pagination and sorting
+- Validate task titles and pagination parameters
 - Return appropriate HTTP status codes
-- Handle invalid requests and missing tasks
-- Generate interactive API documentation
-- Run automated unit and controller tests
-- Build and publish Docker images through GitHub Actions
+- Handle invalid requests and missing tasks with consistent JSON error responses
+- Generate interactive API documentation using Swagger UI
+- Run automated unit tests using JUnit 5 and Mockito
+- Run controller tests using MockMvc
+- Run MySQL integration tests using Testcontainers
+- Containerize the application using Docker and Docker Compose
+- Automatically build, test, and publish Docker images through GitHub Actions
+
+
 
 ## REST API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/tasks` | Retrieve all tasks |
+| GET | `/tasks` | Retrieve tasks with filtering, pagination, and sorting |
 | GET | `/tasks/{id}` | Retrieve a task by ID |
 | POST | `/tasks` | Create a task |
 | PUT | `/tasks/{id}` | Update a task |
 | DELETE | `/tasks/{id}` | Delete a task |
+
+### Query Parameters
+
+| Parameter | Description | Default |
+|---|---|---|
+| `page` | Page number (starting from 0) | 0 |
+| `size` | Number of tasks per page (1–100) | 10 |
+| `sort` | Sorting field and direction | `id,asc` |
+| `completed` | Filter by completion status | All |
+| `keyword` | Case-insensitive title search | None |
+
+### Example: Search Tasks
+
+GET /tasks?completed=false&keyword=Java&page=0&size=5&sort=id,desc
 
 ### Example: Create Task
 
@@ -134,7 +157,17 @@ Run all tests:
 ./mvnw clean verify
 ```
 
-The project includes unit tests for service logic and controller tests for API behavior, input validation, and HTTP status codes.
+
+The project includes 28 automated tests covering:
+
+- Service unit tests using JUnit 5 and Mockito
+- Controller tests using MockMvc
+- MySQL repository integration tests using Testcontainers
+- Input validation and HTTP error responses
+- Task filtering, keyword search, and pagination
+
+All tests are executed automatically through GitHub Actions CI.
+
 
 ## CI/CD
 
@@ -150,13 +183,13 @@ GitHub Actions automates the following workflow:
 
 Docker images are tagged with `latest` and a Git commit SHA.
 
+
 ## Future Improvements
 
-- Pagination and sorting
 - User authentication and authorization
-- Database migrations
-- Integration tests using Testcontainers
+- Database migrations using Flyway
 - Production deployment configuration
+
 
 ## License
 
